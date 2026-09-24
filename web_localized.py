@@ -21,6 +21,7 @@ files cannot change behaviour, and JavaScript syntax is ASCII throughout.
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from typing import Any, Callable
@@ -34,6 +35,13 @@ sys.path.insert(0, str(ROOT / "vendor" / "Confucius4-T3PO"))
 
 from inference.server import STATIC_DIR, app  # noqa: E402  (vendor app, lifespan intact)
 from zh_script import to_display, variant  # noqa: E402
+
+# The product name appears only in index.html's <title> and <h1>; app.js never
+# mentions it and nothing sends it to the server, so renaming it here cannot
+# affect behaviour.  The model id the requests actually carry lives in
+# config/t3po.env.
+UI_TITLE = os.getenv("UI_TITLE", "Star Wars").strip() or "Star Wars"
+UPSTREAM_TITLE = "Confucius4-T3PO"
 
 MEDIA_TYPES = {
     ".html": "text/html; charset=utf-8",
@@ -66,6 +74,8 @@ def _render(name: str) -> bytes:
         # Keep the document's declared locale honest for screen readers and
         # for the font stack the browser picks.
         text = text.replace('lang="zh-CN"', 'lang="zh-TW"')
+        if UI_TITLE != UPSTREAM_TITLE:
+            text = text.replace(UPSTREAM_TITLE, UI_TITLE)
     body = text.encode("utf-8")
     _cache[name] = (stamp, body)
     return body
@@ -81,6 +91,9 @@ def _endpoint(name: str) -> Callable[..., Any]:
 
 
 def _install() -> None:
+    if UI_TITLE != UPSTREAM_TITLE:
+        # Also renames it in the OpenAPI docs, so the two agree.
+        app.title = UI_TITLE
     if variant() == "simplified":
         return
     for path, name in OVERRIDES.items():
