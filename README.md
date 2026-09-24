@@ -35,9 +35,12 @@ Linux x86_64 + CUDA 的預編譯檔；T3PO 則要求 vLLM 服務。這個專案�
 tools，以及約 17 GB 磁碟空間。
 
 ```bash
+git clone https://github.com/jas0nhuan9/starwars.git
+cd starwars
 brew install llama.cpp cmake
 bash scripts/setup.sh         # 上游 checkout（釘住 commit）+ venv + 依賴 + 編譯原生擴充
 bash scripts/fetch_models.sh  # 權重，約 13 GB
+bash scripts/start_all.sh     # 開 http://127.0.0.1:8000/
 ```
 
 [`scripts/setup.sh`](scripts/setup.sh) 會把兩個上游 repo clone 到 `vendor/` 並 checkout
