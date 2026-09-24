@@ -1,0 +1,20 @@
+# Model weights: ~13 GB, fetched with scripts/fetch_models.sh
+/models/
+
+# Upstream checkouts, pinned and restored by scripts/setup.sh
+/vendor/
+/third_party/
+
+# Build tree and its products (scripts/build_r2t2_native.sh rebuilds them)
+/build/
+
+# Python environment
+/.venv/
+__pycache__/
+*.py[cod]
+
+# Runtime state
+/logs/
+/run/
+
+.DS_Store
